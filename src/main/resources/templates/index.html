@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Feedback Analyzer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .btn-success {
+            background-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #1e7e34;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            flex: 1;
+            margin: 0 10px;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Feedback Analyzer</h1>
+    <p style="text-align: center; color: #666;">고객 피드백 분석 시스템</p>
+
+    <p th:if="${success}" class="alert alert-success" th:text="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')} + ' : ' + ${success}"></p>
+
+    <!-- Input Section -->
+    <div class="section">
+        <h3>피드백 입력</h3>
+        <form th:action="@{/analyze}" method="post">
+            <div class="form-group">
+                <label for="text">피드백 텍스트:</label>
+                <textarea id="text" name="text" placeholder="피드백을 입력하세요..."></textarea>
+            </div>
+            <button type="submit">입력하기</button>
+        </form>
+    </div>
+
+    <!-- File Upload Section -->
+    <div class="section">
+        <h3>CSV 파일 업로드 (선택사항)</h3>
+        <form th:action="@{/upload}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">CSV 파일 선택:</label>
+                <input type="file" id="file" name="file" accept=".csv">
+            </div>
+            <button type="submit">업로드</button>
+        </form>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="section">
+        <h3>피드백 분석</h3>
+        <form th:action="@{/filter}" method="post">
+            <div class="form-group">
+                <label for="sentiment">감정 필터:</label>
+                <select id="sentiment" name="sentiment">
+                    <option value="전체">전체</option>
+                    <option value="긍정">긍정</option>
+                    <option value="중립">중립</option>
+                    <option value="부정">부정</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="keyword">키워드 필터:</label>
+                <select id="keyword" name="keyword">
+                    <option value="전체">전체</option>
+                    <option th:each="category : ${categories}" th:value="${category}" th:text="${category}"></option>
+                </select>
+            </div>
+            <button type="submit">분  석</button>
+        </form>
+    </div>
+
+    <p th:if="${warning}" class="alert alert-warning" th:text="${warning}"></p>
+
+    <!-- Results Section -->
+    <div class="section" th:if="${sentimentResults} or ${keywordResults}">
+        <h3>분석 결과</h3>
+
+        <!-- Sentiment Chart -->
+        <div class="chart" th:if="${sentimentResults}">
+            <h4>감정 분포</h4>
+            <div class="stats">
+                <div class="stat-item" th:each="entry : ${sentimentResults}">
+                    <div class="stat-number" th:text="${entry.value}"></div>
+                    <div class="stat-label" th:text="${entry.key}"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyword Chart -->
+        <div class="chart" th:if="${keywordResults}">
+            <h4>키워드 분포</h4>
+            <div class="stats">
+                <div class="stat-item" th:each="entry : ${keywordResults}">
+                    <div class="stat-number" th:text="${entry.value}"></div>
+                    <div class="stat-label" th:text="${entry.key}"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Download Button -->
+        <a th:href="@{/download}">
+            <button type="submit" class="btn-success">결과 다운로드</button>
+        </a>
+    </div>
+
+    <p th:if="${error}" class="alert alert-danger" th:text="${error}"></p>
+</div>
+</body>
+</html>
