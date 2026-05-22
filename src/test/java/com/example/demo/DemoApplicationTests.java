@@ -27,7 +27,7 @@ class DemoApplicationTests {
 				new Feedback("포장은 보통입니다")
 		);
 
-		Map<String, Integer> result = analyzer.sent(feedbacks);
+		Map<String, Integer> result = analyzer.analyzeSentiments(feedbacks);
 
 		assertEquals(1, result.get("긍정"));
 		assertEquals(1, result.get("부정"));
@@ -45,7 +45,7 @@ class DemoApplicationTests {
 				new Feedback("관련 키워드가 없는 의견입니다")
 		);
 
-		Map<String, Integer> result = analyzer.kw(feedbacks);
+		Map<String, Integer> result = analyzer.analyzeCategoryKeywords(feedbacks);
 
 		assertEquals(1, result.get("배송"));
 		assertEquals(1, result.get("품질"));

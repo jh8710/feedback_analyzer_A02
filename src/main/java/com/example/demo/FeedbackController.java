@@ -70,8 +70,8 @@ public class FeedbackController {
             model.addAttribute("success", feedbacks.size() + "개의 피드백이 입력되었습니다.");
             // Analyze feedbacks
             if (!feedbacks.isEmpty()) {
-                Map<String, Integer> sentimentResults = textAnalyzer.sent(feedbacks);
-                Map<String, Integer> keywordResults = textAnalyzer.kw(feedbacks);
+                Map<String, Integer> sentimentResults = textAnalyzer.analyzeSentiments(feedbacks);
+                Map<String, Integer> keywordResults = textAnalyzer.analyzeCategoryKeywords(feedbacks);
 
                 model.addAttribute("sentimentResults", sentimentResults);
                 model.addAttribute("keywordResults", keywordResults);
@@ -158,8 +158,8 @@ public class FeedbackController {
 
                 if (!filtered.isEmpty()) {
                     fil_data = filtered;
-                    Map<String, Integer> sentimentResults = textAnalyzer.sent(filtered);
-                    Map<String, Integer> keywordResults = textAnalyzer.kw(filtered);
+                    Map<String, Integer> sentimentResults = textAnalyzer.analyzeSentiments(filtered);
+                    Map<String, Integer> keywordResults = textAnalyzer.analyzeCategoryKeywords(filtered);
 
                     model.addAttribute("sentimentResults", sentimentResults);
                     model.addAttribute("keywordResults", keywordResults);
