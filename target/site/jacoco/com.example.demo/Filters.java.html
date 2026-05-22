@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Filters.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">demo</a> &gt; <a href="index.source.html" class="el_package">com.example.demo</a> &gt; <span class="el_source">Filters.java</span></div><h1>Filters.java</h1><pre class="source lang-java linenums">package com.example.demo;
+
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+
+import static com.example.demo.Constants.CATEGORY_KEYWORDS;
+
+@Service
+<span class="fc" id="L10">public class Filters {</span>
+
+<span class="fc" id="L12">    private static final Map&lt;String, List&lt;String&gt;&gt; S_KEYWORDS = new HashMap&lt;&gt;();</span>
+
+    static {
+<span class="fc" id="L15">        S_KEYWORDS.put(&quot;긍정&quot;, Arrays.asList(</span>
+                &quot;좋아요&quot;, &quot;만족&quot;, &quot;감사&quot;, &quot;친절&quot;, &quot;좋다&quot;, &quot;좋았&quot;, &quot;좋은&quot;, &quot;우수&quot;, &quot;빠르&quot;, &quot;정확&quot;, &quot;신속&quot;, &quot;안전&quot;, &quot;괜찮&quot;, &quot;인상적&quot;, &quot;추천&quot;, &quot;기대 이상&quot;, &quot;합리&quot;, &quot;꼼꼼&quot;, &quot;뛰어납니다&quot;, &quot;만족스럽&quot;, &quot;좋았습니다&quot;, &quot;좋습니다&quot;, &quot;만족합니다&quot;, &quot;굿&quot;, &quot;최고&quot;, &quot;최고입니다&quot;, &quot;감사합니다&quot;
+        ));
+<span class="fc" id="L18">        S_KEYWORDS.put(&quot;부정&quot;, Arrays.asList(</span>
+                &quot;나쁘&quot;, &quot;불만&quot;, &quot;실망&quot;, &quot;최악&quot;, &quot;별로&quot;, &quot;불편&quot;, &quot;불만족&quot;, &quot;문제&quot;,
+                &quot;불량&quot;, &quot;불량품&quot;, &quot;환불&quot;, &quot;교환&quot;, &quot;불만족스럽&quot;, &quot;실망스럽&quot;, &quot;비싸&quot;, &quot;불친절&quot;, &quot;늦다&quot;
+        ));
+<span class="fc" id="L22">        S_KEYWORDS.put(&quot;중립&quot;, Arrays.asList(</span>
+                &quot;괜찮&quot;, &quot;보통&quot;, &quot;평범&quot;, &quot;무난&quot;, &quot;그냥&quot;, &quot;전반적&quot;, &quot;완료&quot;, &quot;적당&quot;, &quot;나쁘지 않&quot;, &quot;특별&quot;, &quot;없&quot;
+        ));
+<span class="fc" id="L25">    }</span>
+
+    public List&lt;Feedback&gt; fil(List&lt;Feedback&gt; dataList, String sFilter, String kFilter) {
+<span class="fc" id="L28">        List&lt;Feedback&gt; tmpFiltered = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        if (!&quot;전체&quot;.equals(sFilter)) {</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">            for (Feedback item : dataList) {</span>
+<span class="fc" id="L32">                String txt = item.getText().toLowerCase();</span>
+<span class="fc" id="L33">                String currentSentiment = &quot;중립&quot;;</span>
+
+<span class="fc bfc" id="L35" title="All 2 branches covered.">                if (S_KEYWORDS.get(&quot;긍정&quot;).stream().anyMatch(key -&gt; txt.contains(key))) {</span>
+<span class="fc" id="L36">                    currentSentiment = &quot;긍정&quot;;</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">                } else if (S_KEYWORDS.get(&quot;부정&quot;).stream().anyMatch(key -&gt; txt.contains(key))) {</span>
+<span class="fc" id="L38">                    currentSentiment = &quot;부정&quot;;</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">                } else if (S_KEYWORDS.get(&quot;중립&quot;).stream().anyMatch(key -&gt; txt.contains(key))) {</span>
+<span class="fc" id="L40">                    currentSentiment = &quot;중립&quot;;</span>
+                }
+
+<span class="fc bfc" id="L43" title="All 2 branches covered.">                if (currentSentiment.equals(sFilter)) {</span>
+<span class="fc" id="L44">                    tmpFiltered.add(item);</span>
+                }
+<span class="fc" id="L46">            }</span>
+        } else {
+<span class="fc" id="L48">            tmpFiltered = new ArrayList&lt;&gt;(dataList);</span>
+        }
+
+<span class="fc" id="L51">        List&lt;Feedback&gt; finalFiltered = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (!&quot;전체&quot;.equals(kFilter)) {</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">            for (Feedback item : tmpFiltered) {</span>
+<span class="fc" id="L54">                String txt = item.getText().toLowerCase();</span>
+
+<span class="fc" id="L56">                Map&lt;String, List&lt;String&gt;&gt; tmpSub = (Map&lt;String, List&lt;String&gt;&gt;)CATEGORY_KEYWORDS.get(kFilter).get(&quot;sub&quot;);</span>
+
+<span class="fc bfc" id="L58" title="All 2 branches covered.">                for (String key : tmpSub.keySet()) {</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">                    if(tmpSub.get(key).stream().anyMatch(keyword -&gt; txt.contains(keyword))) {</span>
+<span class="fc" id="L60">                        finalFiltered.add(item);</span>
+                    }
+<span class="fc" id="L62">                }</span>
+<span class="fc" id="L63">            }</span>
+        } else {
+<span class="fc" id="L65">            finalFiltered = new ArrayList&lt;&gt;(tmpFiltered);</span>
+        }
+
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        for(Feedback i : finalFiltered) {</span>
+<span class="fc" id="L69">            System.out.println(i.getText());</span>
+<span class="fc" id="L70">        }</span>
+
+<span class="fc" id="L72">        return finalFiltered;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
