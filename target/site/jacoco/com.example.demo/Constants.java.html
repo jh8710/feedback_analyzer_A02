@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Constants.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">demo</a> &gt; <a href="index.source.html" class="el_package">com.example.demo</a> &gt; <span class="el_source">Constants.java</span></div><h1>Constants.java</h1><pre class="source lang-java linenums">package com.example.demo;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+<span class="nc" id="L8">public class Constants {</span>
+<span class="fc" id="L9">    public static final Map&lt;String, List&lt;String&gt;&gt; SENTIMENT_KEYWORDS = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L10">    public static final Map&lt;String, Map&lt;String, Object&gt;&gt; CATEGORY_KEYWORDS = new HashMap&lt;&gt;();</span>
+
+    static {
+        // Sentiment keywords
+<span class="fc" id="L14">        SENTIMENT_KEYWORDS.put(&quot;긍정&quot;, Arrays.asList(</span>
+                &quot;좋아요&quot;, &quot;만족&quot;, &quot;감사&quot;, &quot;최고&quot;, &quot;좋은&quot;, &quot;훌륭&quot;, &quot;추천&quot;, &quot;좋았어요&quot;,
+                &quot;좋습니다&quot;, &quot;최고입니다&quot;, &quot;감사합니다&quot;, &quot;만족스럽&quot;, &quot;좋았습니다&quot;,
+                &quot;최고에요&quot;, &quot;기뻐요&quot;, &quot;만족합니다&quot;, &quot;굿&quot;, &quot;최고다&quot;, &quot;와우&quot;, &quot;아주 좋아&quot;,
+                &quot;좋아요&quot;, &quot;만족&quot;, &quot;감사&quot;, &quot;최고&quot;, &quot;좋은&quot;, &quot;훌륭&quot;, &quot;추천&quot;, &quot;좋았어요&quot;,
+                &quot;좋습니다&quot;, &quot;최고입니다&quot;, &quot;감사합니다&quot;, &quot;만족스럽&quot;, &quot;좋았습니다&quot;
+        ));
+
+<span class="fc" id="L22">        SENTIMENT_KEYWORDS.put(&quot;부정&quot;, Arrays.asList(</span>
+                &quot;나쁘&quot;, &quot;불만&quot;, &quot;실망&quot;, &quot;최악&quot;, &quot;별로&quot;, &quot;불편&quot;, &quot;불만족&quot;, &quot;문제&quot;,
+                &quot;불량&quot;, &quot;불량품&quot;, &quot;환불&quot;, &quot;교환&quot;, &quot;불만족스럽&quot;, &quot;실망스럽&quot;,
+                &quot;짜증&quot;, &quot;화남&quot;, &quot;별로에요&quot;, &quot;엉망&quot;, &quot;최악이다&quot;, &quot;실패&quot;, &quot;구려&quot;,
+                &quot;나쁘&quot;, &quot;불만&quot;, &quot;실망&quot;, &quot;최악&quot;, &quot;별로&quot;, &quot;불편&quot;, &quot;불만족&quot;, &quot;문제&quot;,
+                &quot;불량&quot;, &quot;불량품&quot;, &quot;환불&quot;, &quot;교환&quot;, &quot;불만족스럽&quot;, &quot;실망스럽&quot;
+        ));
+
+        // Category keywords
+<span class="fc" id="L31">        Map&lt;String, Object&gt; deliveryKeywords = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L32">        deliveryKeywords.put(&quot;main&quot;, Arrays.asList(&quot;배송&quot;, &quot;택배&quot;, &quot;배달&quot;, &quot;물류&quot;, &quot;배송지연&quot;, &quot;배송시간&quot;, &quot;퀵&quot;, &quot;소포&quot;));</span>
+<span class="fc" id="L33">        Map&lt;String, List&lt;String&gt;&gt; deliverySub = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L34">        deliverySub.put(&quot;time&quot;, Arrays.asList(&quot;배송지연&quot;, &quot;배송시간&quot;, &quot;퀵&quot;));</span>
+<span class="fc" id="L35">        deliverySub.put(&quot;type&quot;, Arrays.asList(&quot;택배&quot;, &quot;배달&quot;, &quot;소포&quot;));</span>
+<span class="fc" id="L36">        deliverySub.put(&quot;status&quot;, Arrays.asList(&quot;물류&quot;, &quot;배송&quot;));</span>
+<span class="fc" id="L37">        deliveryKeywords.put(&quot;sub&quot;, deliverySub);</span>
+<span class="fc" id="L38">        CATEGORY_KEYWORDS.put(&quot;배송&quot;, deliveryKeywords);</span>
+
+<span class="fc" id="L40">        Map&lt;String, Object&gt; qualityKeywords = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L41">        qualityKeywords.put(&quot;main&quot;, Arrays.asList(&quot;품질&quot;, &quot;재질&quot;, &quot;내구성&quot;, &quot;마감&quot;, &quot;제품상태&quot;, &quot;품질문제&quot;, &quot;내용물&quot;, &quot;고장&quot;));</span>
+<span class="fc" id="L42">        Map&lt;String, List&lt;String&gt;&gt; qualitySub = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L43">        qualitySub.put(&quot;physical&quot;, Arrays.asList(&quot;재질&quot;, &quot;내구성&quot;, &quot;마감&quot;));</span>
+<span class="fc" id="L44">        qualitySub.put(&quot;state&quot;, Arrays.asList(&quot;제품상태&quot;, &quot;품질문제&quot;, &quot;고장&quot;));</span>
+<span class="fc" id="L45">        qualitySub.put(&quot;content&quot;, Arrays.asList(&quot;내용물&quot;));</span>
+<span class="fc" id="L46">        qualityKeywords.put(&quot;sub&quot;, qualitySub);</span>
+<span class="fc" id="L47">        CATEGORY_KEYWORDS.put(&quot;품질&quot;, qualityKeywords);</span>
+
+<span class="fc" id="L49">        Map&lt;String, Object&gt; priceKeywords = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L50">        priceKeywords.put(&quot;main&quot;, Arrays.asList(&quot;가격&quot;, &quot;비용&quot;, &quot;할인&quot;, &quot;가성비&quot;, &quot;가격대&quot;, &quot;비싸&quot;, &quot;저렴&quot;, &quot;금액&quot;, &quot;요금&quot;));</span>
+<span class="fc" id="L51">        Map&lt;String, List&lt;String&gt;&gt; priceSub = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L52">        priceSub.put(&quot;amount&quot;, Arrays.asList(&quot;가격&quot;, &quot;비용&quot;, &quot;금액&quot;, &quot;요금&quot;));</span>
+<span class="fc" id="L53">        priceSub.put(&quot;discount&quot;, Arrays.asList(&quot;할인&quot;, &quot;가성비&quot;, &quot;가격대&quot;));</span>
+<span class="fc" id="L54">        priceSub.put(&quot;evaluation&quot;, Arrays.asList(&quot;비싸&quot;, &quot;저렴&quot;));</span>
+<span class="fc" id="L55">        priceKeywords.put(&quot;sub&quot;, priceSub);</span>
+<span class="fc" id="L56">        CATEGORY_KEYWORDS.put(&quot;가격&quot;, priceKeywords);</span>
+
+<span class="fc" id="L58">        Map&lt;String, Object&gt; serviceKeywords = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L59">        serviceKeywords.put(&quot;main&quot;, Arrays.asList(&quot;서비스&quot;, &quot;응대&quot;, &quot;상담&quot;, &quot;문의&quot;, &quot;답변&quot;, &quot;고객서비스&quot;, &quot;친절&quot;, &quot;불친절&quot;));</span>
+<span class="fc" id="L60">        Map&lt;String, List&lt;String&gt;&gt; serviceSub = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L61">        serviceSub.put(&quot;interaction&quot;, Arrays.asList(&quot;응대&quot;, &quot;상담&quot;, &quot;문의&quot;, &quot;답변&quot;));</span>
+<span class="fc" id="L62">        serviceSub.put(&quot;quality&quot;, Arrays.asList(&quot;친절&quot;, &quot;불친절&quot;));</span>
+<span class="fc" id="L63">        serviceSub.put(&quot;type&quot;, Arrays.asList(&quot;서비스&quot;, &quot;고객서비스&quot;));</span>
+<span class="fc" id="L64">        serviceKeywords.put(&quot;sub&quot;, serviceSub);</span>
+<span class="fc" id="L65">        CATEGORY_KEYWORDS.put(&quot;서비스&quot;, serviceKeywords);</span>
+
+<span class="fc" id="L67">        Map&lt;String, Object&gt; usabilityKeywords = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L68">        usabilityKeywords.put(&quot;main&quot;, Arrays.asList(&quot;사용&quot;, &quot;편리&quot;, &quot;불편&quot;, &quot;사용법&quot;, &quot;설명서&quot;, &quot;사용방법&quot;, &quot;어렵&quot;, &quot;쉽게&quot;));</span>
+<span class="fc" id="L69">        Map&lt;String, List&lt;String&gt;&gt; usabilitySub = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L70">        usabilitySub.put(&quot;ease&quot;, Arrays.asList(&quot;편리&quot;, &quot;불편&quot;, &quot;쉽게&quot;, &quot;어렵&quot;));</span>
+<span class="fc" id="L71">        usabilitySub.put(&quot;guide&quot;, Arrays.asList(&quot;사용법&quot;, &quot;설명서&quot;, &quot;사용방법&quot;));</span>
+<span class="fc" id="L72">        usabilitySub.put(&quot;action&quot;, Arrays.asList(&quot;사용&quot;));</span>
+<span class="fc" id="L73">        usabilityKeywords.put(&quot;sub&quot;, usabilitySub);</span>
+<span class="fc" id="L74">        CATEGORY_KEYWORDS.put(&quot;사용성&quot;, usabilityKeywords);</span>
+<span class="fc" id="L75">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Logger.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">demo</a> &gt; <a href="index.source.html" class="el_package">com.example.demo</a> &gt; <span class="el_source">Logger.java</span></div><h1>Logger.java</h1><pre class="source lang-java linenums">package com.example.demo;
+
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+@Service
+<span class="nc" id="L9">public class Logger {</span>
+
+<span class="nc" id="L11">    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd HH:mm:ss&quot;);</span>
+<span class="nc" id="L12">    private static boolean debugMode = true;</span>
+
+    public static void logInfo(String message) {
+<span class="nc" id="L15">        String timestamp = LocalDateTime.now().format(formatter);</span>
+<span class="nc" id="L16">        System.out.println(&quot;[&quot; + timestamp + &quot;] INFO: &quot; + message);</span>
+<span class="nc" id="L17">    }</span>
+
+    public static void logWarning(String message) {
+<span class="nc" id="L20">        String timestamp = LocalDateTime.now().format(formatter);</span>
+<span class="nc" id="L21">        System.out.println(&quot;[&quot; + timestamp + &quot;] WARNING: &quot; + message);</span>
+<span class="nc" id="L22">    }</span>
+
+    public static void logError(String message) {
+<span class="nc" id="L25">        String timestamp = LocalDateTime.now().format(formatter);</span>
+<span class="nc" id="L26">        System.err.println(&quot;[&quot; + timestamp + &quot;] ERROR: &quot; + message);</span>
+<span class="nc" id="L27">    }</span>
+
+    public static void logDebug(String message) {
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        if (debugMode) {</span>
+<span class="nc" id="L31">            String timestamp = LocalDateTime.now().format(formatter);</span>
+<span class="nc" id="L32">            System.out.println(&quot;[&quot; + timestamp + &quot;] DEBUG: &quot; + message);</span>
+        }
+<span class="nc" id="L34">    }</span>
+
+    public static void setDebugMode(boolean mode) {
+<span class="nc" id="L37">        debugMode = mode;</span>
+<span class="nc" id="L38">    }</span>
+
+    public static boolean isDebugMode() {
+<span class="nc" id="L41">        return debugMode;</span>
+    }
+
+    public static void logInfo(String format, Object... args) {
+<span class="nc" id="L45">        logInfo(String.format(format, args));</span>
+<span class="nc" id="L46">    }</span>
+
+    public static void logWarning(String format, Object... args) {
+<span class="nc" id="L49">        logWarning(String.format(format, args));</span>
+<span class="nc" id="L50">    }</span>
+
+    public static void logError(String format, Object... args) {
+<span class="nc" id="L53">        logError(String.format(format, args));</span>
+<span class="nc" id="L54">    }</span>
+
+    public static void logDebug(String format, Object... args) {
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if (debugMode) {</span>
+<span class="nc" id="L58">            logDebug(String.format(format, args));</span>
+        }
+<span class="nc" id="L60">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

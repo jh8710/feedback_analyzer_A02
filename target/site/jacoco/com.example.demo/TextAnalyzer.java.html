@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TextAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">demo</a> &gt; <a href="index.source.html" class="el_package">com.example.demo</a> &gt; <span class="el_source">TextAnalyzer.java</span></div><h1>TextAnalyzer.java</h1><pre class="source lang-java linenums">package com.example.demo;
+
+import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Service
+<span class="fc" id="L10">public class TextAnalyzer {</span>
+
+<span class="fc" id="L12">    private static Map&lt;String, Integer&gt; globalSent = null;</span>
+<span class="fc" id="L13">    private static Map&lt;String, Integer&gt; globalKw = null;</span>
+
+    public Map&lt;String, Integer&gt; sent(List&lt;Feedback&gt; feedbacks) {
+<span class="fc" id="L16">        Map&lt;String, Integer&gt; res = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L17">        res.put(&quot;긍정&quot;, 0);</span>
+<span class="fc" id="L18">        res.put(&quot;중립&quot;, 0);</span>
+<span class="fc" id="L19">        res.put(&quot;부정&quot;, 0);</span>
+
+<span class="fc bfc" id="L21" title="All 2 branches covered.">        for (Feedback f : feedbacks) {</span>
+<span class="fc" id="L22">            String txt = f.getText().toLowerCase();</span>
+<span class="fc" id="L23">            String s = &quot;중립&quot;;</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">            if (Constants.SENTIMENT_KEYWORDS.get(&quot;긍정&quot;).stream().anyMatch(k -&gt; txt.contains(k))) {</span>
+<span class="fc" id="L25">                s = &quot;긍정&quot;;</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">            } else if (Constants.SENTIMENT_KEYWORDS.get(&quot;부정&quot;).stream().anyMatch(k -&gt; txt.contains(k))) {</span>
+<span class="fc" id="L27">                s = &quot;부정&quot;;</span>
+            }
+<span class="fc" id="L29">            res.put(s, res.get(s) + 1);</span>
+<span class="fc" id="L30">        }</span>
+
+<span class="fc" id="L32">        globalSent = res;</span>
+<span class="fc" id="L33">        return res;</span>
+    }
+
+    public Map&lt;String, Integer&gt; kw(List&lt;Feedback&gt; feedbacks) {
+<span class="fc" id="L37">        Map&lt;String, Integer&gt; res2 = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        for (String category : Constants.CATEGORY_KEYWORDS.keySet()) {</span>
+<span class="fc" id="L39">            res2.put(category, 0);</span>
+<span class="fc" id="L40">        }</span>
+
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        for (Feedback f : feedbacks) {</span>
+<span class="fc" id="L43">            String txt = f.getText().toLowerCase();</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">            for (Map.Entry&lt;String, Map&lt;String, Object&gt;&gt; entry : Constants.CATEGORY_KEYWORDS.entrySet()) {</span>
+<span class="fc" id="L45">                String cat = entry.getKey();</span>
+                @SuppressWarnings(&quot;unchecked&quot;)
+<span class="fc" id="L47">                List&lt;String&gt; kws = (List&lt;String&gt;) entry.getValue().get(&quot;main&quot;);</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">                if (kws.stream().anyMatch(kw -&gt; txt.contains(kw))) {</span>
+<span class="fc" id="L49">                    res2.put(cat, res2.get(cat) + 1);</span>
+                }
+<span class="fc" id="L51">            }</span>
+<span class="fc" id="L52">        }</span>
+
+<span class="fc" id="L54">        globalKw = res2;</span>
+<span class="fc" id="L55">        return res2;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

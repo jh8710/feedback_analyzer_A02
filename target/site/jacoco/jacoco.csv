@@ -1,0 +1,11 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+demo,com.example.demo,Logger,78,0,4,0,28,0,14,0,12,0
+demo,com.example.demo,Filters,0,418,1,21,0,36,1,17,0,7
+demo,com.example.demo,Feedback,15,9,0,0,6,4,2,2,2,2
+demo,com.example.demo,FileHandler,0,28,0,2,0,7,0,4,0,3
+demo,com.example.demo,FeedbackController,445,0,18,0,92,0,15,0,6,0
+demo,com.example.demo,TextAnalyzer,0,180,0,14,0,33,0,14,0,7
+demo,com.example.demo,Session,60,0,10,0,19,0,11,0,6,0
+demo,com.example.demo,DemoApplication,8,0,0,0,3,0,2,0,2,0
+demo,com.example.demo,Constants,3,849,0,0,1,45,1,1,1,1
+demo,com.example.demo,UIComponents,30,0,0,0,3,0,3,0,3,0
