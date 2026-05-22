@@ -2,6 +2,7 @@ package com.example.demo;
 
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,49 +10,81 @@ import java.util.Map;
 @Service
 public class TextAnalyzer {
 
-    private static Map<String, Integer> globalSent = null;
-    private static Map<String, Integer> globalKw = null;
+    private static Map<String, Integer> latestSentimentCounts = null;
+    private static Map<String, Integer> latestCategoryCounts = null;
 
-    public Map<String, Integer> sent(List<Feedback> feedbacks) {
-        Map<String, Integer> res = new HashMap<>();
-        res.put("긍정", 0);
-        res.put("중립", 0);
-        res.put("부정", 0);
+    public Map<String, Integer> analyzeSentiments(List<Feedback> feedbacks) {
+        Map<String, Integer> sentimentCounts = initializeCounts(List.of(
+                Constants.SENTIMENT_POSITIVE,
+                Constants.SENTIMENT_NEUTRAL,
+                Constants.SENTIMENT_NEGATIVE
+        ));
 
-        for (Feedback f : feedbacks) {
-            String txt = f.getText().toLowerCase();
-            String s = "중립";
-            if (Constants.SENTIMENT_KEYWORDS.get("긍정").stream().anyMatch(k -> txt.contains(k))) {
-                s = "긍정";
-            } else if (Constants.SENTIMENT_KEYWORDS.get("부정").stream().anyMatch(k -> txt.contains(k))) {
-                s = "부정";
-            }
-            res.put(s, res.get(s) + 1);
+        for (Feedback feedback : feedbacks) {
+            incrementCount(sentimentCounts, detectSentiment(normalize(feedback)));
         }
 
-        globalSent = res;
-        return res;
+        latestSentimentCounts = sentimentCounts;
+        return sentimentCounts;
     }
 
-    public Map<String, Integer> kw(List<Feedback> feedbacks) {
-        Map<String, Integer> res2 = new HashMap<>();
-        for (String category : Constants.CATEGORY_KEYWORDS.keySet()) {
-            res2.put(category, 0);
+    public Map<String, Integer> analyzeCategoryKeywords(List<Feedback> feedbacks) {
+        Map<String, Integer> categoryCounts = initializeCounts(Constants.CATEGORY_KEYWORDS.keySet());
+
+        for (Feedback feedback : feedbacks) {
+            countMatchedCategories(categoryCounts, normalize(feedback));
         }
 
-        for (Feedback f : feedbacks) {
-            String txt = f.getText().toLowerCase();
-            for (Map.Entry<String, Map<String, Object>> entry : Constants.CATEGORY_KEYWORDS.entrySet()) {
-                String cat = entry.getKey();
-                @SuppressWarnings("unchecked")
-                List<String> kws = (List<String>) entry.getValue().get("main");
-                if (kws.stream().anyMatch(kw -> txt.contains(kw))) {
-                    res2.put(cat, res2.get(cat) + 1);
-                }
+        latestCategoryCounts = categoryCounts;
+        return categoryCounts;
+    }
+
+    private Map<String, Integer> initializeCounts(Collection<String> labels) {
+        Map<String, Integer> counts = new HashMap<>();
+        for (String label : labels) {
+            counts.put(label, Constants.INITIAL_ANALYSIS_COUNT);
+        }
+        return counts;
+    }
+
+    private String normalize(Feedback feedback) {
+        return feedback.getText().toLowerCase();
+    }
+
+    private String detectSentiment(String normalizedFeedbackText) {
+        if (containsAnyKeyword(normalizedFeedbackText, Constants.SENTIMENT_KEYWORDS.get(Constants.SENTIMENT_POSITIVE))) {
+            return Constants.SENTIMENT_POSITIVE;
+        }
+
+        if (containsAnyKeyword(normalizedFeedbackText, Constants.SENTIMENT_KEYWORDS.get(Constants.SENTIMENT_NEGATIVE))) {
+            return Constants.SENTIMENT_NEGATIVE;
+        }
+
+        return Constants.SENTIMENT_NEUTRAL;
+    }
+
+    private void countMatchedCategories(Map<String, Integer> categoryCounts, String normalizedFeedbackText) {
+        for (Map.Entry<String, Map<String, Object>> categoryEntry : Constants.CATEGORY_KEYWORDS.entrySet()) {
+            if (matchesCategory(normalizedFeedbackText, categoryEntry.getValue())) {
+                incrementCount(categoryCounts, categoryEntry.getKey());
             }
         }
+    }
 
-        globalKw = res2;
-        return res2;
+    private boolean matchesCategory(String normalizedFeedbackText, Map<String, Object> categoryKeywords) {
+        return containsAnyKeyword(normalizedFeedbackText, getMainKeywords(categoryKeywords));
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> getMainKeywords(Map<String, Object> categoryKeywords) {
+        return (List<String>) categoryKeywords.get(Constants.CATEGORY_MAIN_KEY);
+    }
+
+    private boolean containsAnyKeyword(String normalizedFeedbackText, List<String> keywords) {
+        return keywords.stream().anyMatch(normalizedFeedbackText::contains);
+    }
+
+    private void incrementCount(Map<String, Integer> counts, String label) {
+        counts.put(label, counts.get(label) + 1);
     }
 }
