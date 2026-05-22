@@ -3,9 +3,11 @@ C:\dev\feedback_analyzer_A02\src\main\java\com\example\demo\DemoApplication.java
 C:\dev\feedback_analyzer_A02\src\main\java\com\example\demo\Feedback.java
 C:\dev\feedback_analyzer_A02\src\main\java\com\example\demo\FeedbackController.java
 C:\dev\feedback_analyzer_A02\src\main\java\com\example\demo\FeedbackService.java
+C:\dev\feedback_analyzer_A02\src\main\java\com\example\demo\FeedbackTrendFileDb.java
 C:\dev\feedback_analyzer_A02\src\main\java\com\example\demo\FileHandler.java
 C:\dev\feedback_analyzer_A02\src\main\java\com\example\demo\Filters.java
 C:\dev\feedback_analyzer_A02\src\main\java\com\example\demo\Logger.java
+C:\dev\feedback_analyzer_A02\src\main\java\com\example\demo\SentimentKeywordFileDb.java
 C:\dev\feedback_analyzer_A02\src\main\java\com\example\demo\Session.java
 C:\dev\feedback_analyzer_A02\src\main\java\com\example\demo\TextAnalyzer.java
 C:\dev\feedback_analyzer_A02\src\main\java\com\example\demo\UIComponents.java

@@ -23,6 +23,9 @@ public class FeedbackService {
     @Autowired
     private Logger logger;
 
+    @Autowired
+    private FeedbackTrendFileDb feedbackTrendFileDb;
+
     private List<Feedback> filteredFeedbacks = new ArrayList<>();
 
     public List<Feedback> getFeedbacksForIndex() {
@@ -107,6 +110,10 @@ public class FeedbackService {
 
     public List<Feedback> getFilteredFeedbacks() {
         return filteredFeedbacks;
+    }
+
+    public List<FeedbackTrendFileDb.TrendPoint> getTrendPoints() {
+        return feedbackTrendFileDb.getTrendPoints();
     }
 
     public void updateLogLevel(String logLevel) {

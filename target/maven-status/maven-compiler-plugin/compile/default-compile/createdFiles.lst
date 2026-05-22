@@ -1,3 +1,6 @@
+com\example\demo\FeedbackTrendFileDb.class
+com\example\demo\FeedbackTrendFileDb$TrendPoint.class
+com\example\demo\SentimentKeywordFileDb.class
 com\example\demo\FeedbackService$FilterResult.class
 com\example\demo\FeedbackService.class
 com\example\demo\Logger$LogLevel.class

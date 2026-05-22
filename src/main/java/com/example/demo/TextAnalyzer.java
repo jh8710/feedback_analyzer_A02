@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -13,12 +14,19 @@ public class TextAnalyzer {
     private static Map<String, Integer> latestSentimentCounts = null;
     private static Map<String, Integer> latestCategoryCounts = null;
 
+    private final SentimentKeywordFileDb sentimentKeywordFileDb;
+
+    public TextAnalyzer() {
+        this(new SentimentKeywordFileDb());
+    }
+
+    @Autowired
+    public TextAnalyzer(SentimentKeywordFileDb sentimentKeywordFileDb) {
+        this.sentimentKeywordFileDb = sentimentKeywordFileDb;
+    }
+
     public Map<String, Integer> analyzeSentiments(List<Feedback> feedbacks) {
-        Map<String, Integer> sentimentCounts = initializeCounts(List.of(
-                Constants.SENTIMENT_POSITIVE,
-                Constants.SENTIMENT_NEUTRAL,
-                Constants.SENTIMENT_NEGATIVE
-        ));
+        Map<String, Integer> sentimentCounts = initializeCounts(sentimentKeywordFileDb.getSentimentLabels());
 
         for (Feedback feedback : feedbacks) {
             incrementCount(sentimentCounts, detectSentiment(normalize(feedback)));
@@ -52,15 +60,7 @@ public class TextAnalyzer {
     }
 
     private String detectSentiment(String normalizedFeedbackText) {
-        if (containsAnyKeyword(normalizedFeedbackText, Constants.SENTIMENT_KEYWORDS.get(Constants.SENTIMENT_POSITIVE))) {
-            return Constants.SENTIMENT_POSITIVE;
-        }
-
-        if (containsAnyKeyword(normalizedFeedbackText, Constants.SENTIMENT_KEYWORDS.get(Constants.SENTIMENT_NEGATIVE))) {
-            return Constants.SENTIMENT_NEGATIVE;
-        }
-
-        return Constants.SENTIMENT_NEUTRAL;
+        return sentimentKeywordFileDb.detectSentiment(normalizedFeedbackText);
     }
 
     private void countMatchedCategories(Map<String, Integer> categoryCounts, String normalizedFeedbackText) {
