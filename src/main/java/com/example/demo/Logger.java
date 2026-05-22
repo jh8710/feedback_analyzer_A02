@@ -10,6 +10,12 @@ public class Logger {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static boolean debugMode = true;
+    private static LogLevel logLevel = LogLevel.WARNING;
+
+    public enum LogLevel {
+        WARNING,
+        ERROR
+    }
 
     public static void logInfo(String message) {
         String timestamp = LocalDateTime.now().format(formatter);
@@ -17,8 +23,10 @@ public class Logger {
     }
 
     public static void logWarning(String message) {
-        String timestamp = LocalDateTime.now().format(formatter);
-        System.out.println("[" + timestamp + "] WARNING: " + message);
+        if (logLevel == LogLevel.WARNING) {
+            String timestamp = LocalDateTime.now().format(formatter);
+            System.out.println("[" + timestamp + "] WARNING: " + message);
+        }
     }
 
     public static void logError(String message) {
@@ -39,6 +47,14 @@ public class Logger {
 
     public static boolean isDebugMode() {
         return debugMode;
+    }
+
+    public static void setLogLevel(String level) {
+        logLevel = LogLevel.valueOf(level.toUpperCase());
+    }
+
+    public static String getLogLevel() {
+        return logLevel.name().toLowerCase();
     }
 
     public static void logInfo(String format, Object... args) {

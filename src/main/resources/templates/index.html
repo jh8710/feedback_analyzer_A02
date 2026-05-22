@@ -43,9 +43,10 @@
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 14px;
+            box-sizing: border-box;
         }
         textarea {
-            height: 100px;
+            min-height: 120px;
             resize: vertical;
         }
         button {
@@ -126,9 +127,24 @@
         <form th:action="@{/analyze}" method="post">
             <div class="form-group">
                 <label for="text">피드백 텍스트:</label>
-                <textarea id="text" name="text" placeholder="피드백을 입력하세요..."></textarea>
+                <textarea id="text" name="text" rows="5" wrap="soft" placeholder="피드백을 여러 줄로 입력하세요..."></textarea>
             </div>
             <button type="submit">입력하기</button>
+        </form>
+    </div>
+
+    <!-- Log Level Section -->
+    <div class="section">
+        <h3>로그 설정</h3>
+        <form th:action="@{/log-level}" method="post">
+            <div class="form-group">
+                <label for="logLevel">로그 레벨:</label>
+                <select id="logLevel" name="logLevel">
+                    <option value="warning" th:selected="${logLevel == 'warning'}">Warning 이상</option>
+                    <option value="error" th:selected="${logLevel == 'error'}">Error만</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-warning">로그 레벨 적용</button>
         </form>
     </div>
 
