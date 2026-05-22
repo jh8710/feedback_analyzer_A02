@@ -134,5 +134,6 @@ public class FeedbackController {
     private void addCommonModelAttributes(Model model) {
         model.addAttribute("categories", uiComponents.getCategories());
         model.addAttribute("logLevel", logger.getLogLevel());
+        model.addAttribute("trendPoints", feedbackService.getTrendPoints());
     }
 }

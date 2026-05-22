@@ -112,6 +112,53 @@
             color: #666;
             margin-top: 5px;
         }
+        .trend-row {
+            display: grid;
+            grid-template-columns: 120px 1fr 60px;
+            gap: 12px;
+            align-items: center;
+            margin: 12px 0;
+        }
+        .trend-bar {
+            display: flex;
+            height: 24px;
+            overflow: hidden;
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+        .trend-segment-positive {
+            background-color: #28a745;
+        }
+        .trend-segment-neutral {
+            background-color: #ffc107;
+        }
+        .trend-segment-negative {
+            background-color: #dc3545;
+        }
+        .trend-legend {
+            display: flex;
+            gap: 16px;
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+        .trend-legend-item::before {
+            content: "";
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin-right: 6px;
+            border-radius: 2px;
+        }
+        .trend-legend-positive::before {
+            background-color: #28a745;
+        }
+        .trend-legend-neutral::before {
+            background-color: #ffc107;
+        }
+        .trend-legend-negative::before {
+            background-color: #dc3545;
+        }
     </style>
 </head>
 <body>
@@ -185,6 +232,32 @@
     </div>
 
     <p th:if="${warning}" class="alert alert-warning" th:text="${warning}"></p>
+
+    <!-- Trend Section -->
+    <div class="section" th:if="${trendPoints}">
+        <h3>피드백 Trend</h3>
+        <p>test_feedback_trend.csv 기준 감정 변화</p>
+        <div class="trend-legend">
+            <span class="trend-legend-item trend-legend-positive">긍정</span>
+            <span class="trend-legend-item trend-legend-neutral">중립</span>
+            <span class="trend-legend-item trend-legend-negative">부정</span>
+        </div>
+        <div class="trend-row" th:each="point : ${trendPoints}">
+            <strong th:text="${point.date}"></strong>
+            <div class="trend-bar">
+                <div class="trend-segment-positive"
+                     th:style="'width:' + ${point.total == 0 ? 0 : point.positive * 100 / point.total} + '%'"
+                     th:title="'긍정 ' + ${point.positive}"></div>
+                <div class="trend-segment-neutral"
+                     th:style="'width:' + ${point.total == 0 ? 0 : point.neutral * 100 / point.total} + '%'"
+                     th:title="'중립 ' + ${point.neutral}"></div>
+                <div class="trend-segment-negative"
+                     th:style="'width:' + ${point.total == 0 ? 0 : point.negative * 100 / point.total} + '%'"
+                     th:title="'부정 ' + ${point.negative}"></div>
+            </div>
+            <span th:text="${point.total} + '건'"></span>
+        </div>
+    </div>
 
     <!-- Results Section -->
     <div class="section" th:if="${sentimentResults} or ${keywordResults}">

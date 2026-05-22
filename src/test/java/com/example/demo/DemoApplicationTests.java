@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -124,6 +126,42 @@ class DemoApplicationTests {
 
 		assertEquals(1, result.size());
 		assertEquals("서비스가 괜찮습니다", result.get(0).getText());
+	}
+
+	@Test
+	void sentimentKeywordFileDbLoadsKeywordsFromCsvFile() throws Exception {
+		Path fileDb = Files.createTempFile("sentiment-keywords", ".csv");
+		Files.write(fileDb, List.of(
+				"sentiment,keyword",
+				"긍정,훌륭",
+				"중립,보통",
+				"부정,최악"
+		), StandardCharsets.UTF_8);
+
+		SentimentKeywordFileDb keywordFileDb = new SentimentKeywordFileDb(fileDb.toString());
+
+		assertEquals("긍정", keywordFileDb.detectSentiment("응대가 훌륭합니다"));
+		assertEquals("중립", keywordFileDb.detectSentiment("그냥 보통입니다"));
+		assertEquals("부정", keywordFileDb.detectSentiment("배송이 최악입니다"));
+	}
+
+	@Test
+	void feedbackTrendFileDbLoadsTrendPointsFromCsvFile() throws Exception {
+		Path fileDb = Files.createTempFile("test-feedback-trend", ".csv");
+		Files.write(fileDb, List.of(
+				"date,positive,neutral,negative",
+				"2026-05-21,3,2,1",
+				"2026-05-22,4,1,2"
+		), StandardCharsets.UTF_8);
+
+		List<FeedbackTrendFileDb.TrendPoint> trendPoints = new FeedbackTrendFileDb(fileDb.toString()).getTrendPoints();
+
+		assertEquals(2, trendPoints.size());
+		assertEquals("2026-05-21", trendPoints.get(0).getDate());
+		assertEquals(3, trendPoints.get(0).getPositive());
+		assertEquals(2, trendPoints.get(0).getNeutral());
+		assertEquals(1, trendPoints.get(0).getNegative());
+		assertEquals(6, trendPoints.get(0).getTotal());
 	}
 
 	@Test
