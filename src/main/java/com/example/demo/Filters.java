@@ -29,16 +29,7 @@ public class Filters {
 
         if (!"전체".equals(sFilter)) {
             for (Feedback item : dataList) {
-                String txt = item.getText().toLowerCase();
-                String currentSentiment = "중립";
-
-                if (S_KEYWORDS.get("긍정").stream().anyMatch(key -> txt.contains(key))) {
-                    currentSentiment = "긍정";
-                } else if (S_KEYWORDS.get("부정").stream().anyMatch(key -> txt.contains(key))) {
-                    currentSentiment = "부정";
-                } else if (S_KEYWORDS.get("중립").stream().anyMatch(key -> txt.contains(key))) {
-                    currentSentiment = "중립";
-                }
+                String currentSentiment = getSentiment(item.getText());
 
                 if (currentSentiment.equals(sFilter)) {
                     tmpFiltered.add(item);
@@ -53,6 +44,7 @@ public class Filters {
             for (Feedback item : tmpFiltered) {
                 String txt = item.getText().toLowerCase();
 
+                @SuppressWarnings("unchecked")
                 Map<String, List<String>> tmpSub = (Map<String, List<String>>)CATEGORY_KEYWORDS.get(kFilter).get("sub");
 
                 for (String key : tmpSub.keySet()) {
@@ -70,5 +62,21 @@ public class Filters {
         }
 
         return finalFiltered;
+    }
+
+    private String getSentiment(String text) {
+        String txt = text.toLowerCase();
+
+        if (S_KEYWORDS.get("중립").stream().anyMatch(key -> txt.contains(key))) {
+            return "중립";
+        }
+        if (S_KEYWORDS.get("부정").stream().anyMatch(key -> txt.contains(key))) {
+            return "부정";
+        }
+        if (S_KEYWORDS.get("긍정").stream().anyMatch(key -> txt.contains(key))) {
+            return "긍정";
+        }
+
+        return "중립";
     }
 }

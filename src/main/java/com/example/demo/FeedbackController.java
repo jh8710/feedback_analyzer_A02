@@ -44,7 +44,7 @@ public class FeedbackController {
 
         model.addAttribute("success", "피드백 분석기 시작");
         model.addAttribute("feedbacks", feedbacks);
-        model.addAttribute("categories", uiComponents.getCategories());
+        addCommonModelAttributes(model);
 
         return "index";
     }
@@ -76,7 +76,7 @@ public class FeedbackController {
                 model.addAttribute("sentimentResults", sentimentResults);
                 model.addAttribute("keywordResults", keywordResults);
                 model.addAttribute("feedbacks", feedbacks);
-                model.addAttribute("categories", uiComponents.getCategories());
+                addCommonModelAttributes(model);
 
                 logger.logInfo("감성 분석 완료");
                 logger.logInfo("키워드 분석 완료");
@@ -87,6 +87,20 @@ public class FeedbackController {
             model.addAttribute("error", "처리 중 오류가 발생했습니다.");
         }
 
+        addCommonModelAttributes(model);
+        return "index";
+    }
+
+    @PostMapping("/log-level")
+    public String updateLogLevel(@RequestParam("logLevel") String logLevel, Model model) {
+        try {
+            logger.setLogLevel(logLevel);
+            model.addAttribute("success", "로그 레벨이 " + logger.getLogLevel() + "(으)로 변경되었습니다.");
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", "지원하지 않는 로그 레벨입니다.");
+        }
+
+        addCommonModelAttributes(model);
         return "index";
     }
 
@@ -119,7 +133,7 @@ public class FeedbackController {
                 Session.updateInternalData("current_feedbacks", feedbacks);
                 model.addAttribute("success", feedbacks.size() + "개의 피드백이 입력되었습니다.");
                 model.addAttribute("feedbacks", feedbacks);
-                model.addAttribute("categories", uiComponents.getCategories());
+                addCommonModelAttributes(model);
 
                 logger.logInfo("파일이 성공적으로 업로드되었습니다.");
             }
@@ -128,6 +142,7 @@ public class FeedbackController {
             model.addAttribute("error", "파일 업로드 중 오류가 발생했습니다.");
         }
 
+        addCommonModelAttributes(model);
         return "index";
     }
 
@@ -149,11 +164,11 @@ public class FeedbackController {
                     model.addAttribute("sentimentResults", sentimentResults);
                     model.addAttribute("keywordResults", keywordResults);
                     model.addAttribute("filteredFeedbacks", filtered);
-                    model.addAttribute("categories", uiComponents.getCategories());
+                    addCommonModelAttributes(model);
 
                     logger.logInfo("필터링 결과: %d개의 피드백", filtered.size());
                 } else {
-                    model.addAttribute("categories", uiComponents.getCategories());
+                    addCommonModelAttributes(model);
                     logger.logWarning("필터링 결과가 없습니다.");
                     model.addAttribute("warning", "필터링 결과가 없습니다.");
                 }
@@ -167,6 +182,7 @@ public class FeedbackController {
             model.addAttribute("error", "처리 중 오류가 발생했습니다.");
         }
 
+        addCommonModelAttributes(model);
         return "index";
     }
 
@@ -188,5 +204,10 @@ public class FeedbackController {
         }
         wr.flush();
         wr.close();
+    }
+
+    private void addCommonModelAttributes(Model model) {
+        model.addAttribute("categories", uiComponents.getCategories());
+        model.addAttribute("logLevel", logger.getLogLevel());
     }
 }

@@ -113,6 +113,46 @@ class DemoApplicationTests {
 	}
 
 	@Test
+	void filtersNeutralKeywordAsNeutralWhenItOverlapsPositiveKeyword() {
+		Filters filters = new Filters();
+		List<Feedback> feedbacks = List.of(
+				new Feedback("서비스가 괜찮습니다"),
+				new Feedback("서비스가 좋아요")
+		);
+
+		List<Feedback> result = filters.fil(feedbacks, "중립", "전체");
+
+		assertEquals(1, result.size());
+		assertEquals("서비스가 괜찮습니다", result.get(0).getText());
+	}
+
+	@Test
+	void loggerSuppressesWarningsWhenLogLevelIsError() {
+		Logger.setLogLevel("error");
+
+		try {
+			String output = captureStandardOutput(() -> Logger.logWarning("숨겨질 경고"));
+
+			assertEquals("", output);
+		} finally {
+			Logger.setLogLevel("warning");
+		}
+	}
+
+	@Test
+	void loggerKeepsErrorsEnabledWhenLogLevelIsError() {
+		Logger.setLogLevel("error");
+
+		try {
+			String output = captureStandardError(() -> Logger.logError("보여야 할 오류"));
+
+			assertTrue(output.contains("ERROR: 보여야 할 오류"));
+		} finally {
+			Logger.setLogLevel("warning");
+		}
+	}
+
+	@Test
 	void fileHandlerSaveResultPrintsDataSizeAndFeedbackText() {
 		FileHandler fileHandler = new FileHandler();
 		List<Feedback> feedbacks = List.of(
@@ -146,6 +186,18 @@ class DemoApplicationTests {
 			runnable.run();
 		} finally {
 			System.setOut(originalOut);
+		}
+		return outputStream.toString(StandardCharsets.UTF_8);
+	}
+
+	private String captureStandardError(Runnable runnable) {
+		PrintStream originalErr = System.err;
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		System.setErr(new PrintStream(outputStream, true, StandardCharsets.UTF_8));
+		try {
+			runnable.run();
+		} finally {
+			System.setErr(originalErr);
 		}
 		return outputStream.toString(StandardCharsets.UTF_8);
 	}
