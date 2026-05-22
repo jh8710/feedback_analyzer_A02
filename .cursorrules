@@ -1,0 +1,42 @@
+# Feedback Analyzer Cursor Rules
+
+## Project Context
+
+- This is a Java 17 Spring Boot + Thymeleaf customer feedback analyzer.
+- The app collects feedback by text input or CSV upload, analyzes sentiment and category by keyword rules, filters results, visualizes counts, and downloads filtered CSV data.
+- Treat this repository as a refactoring challenge, not a polished production app. Existing code intentionally contains code smells: global state, duplicated rules, weak naming, controller overload, hardcoded constants, and missing tests.
+
+## Product Mission
+
+- Preserve the core user flows: input feedback, upload CSV, analyze sentiment, analyze categories, filter results, display statistics, and download CSV.
+- Sentiments are `긍정`, `중립`, `부정`.
+- Categories are `배송`, `품질`, `가격`, `서비스`, `사용성`.
+- Prefer behavior-preserving refactoring unless the user explicitly asks for a feature or bug fix.
+
+## Architecture Direction
+
+- Move business logic out of controllers. Controllers should mainly handle request/response and model assembly.
+- Prefer clear service boundaries such as `FeedbackService`, `AnalysisService`, `FilterService`, and `CsvService` when refactoring.
+- Keep keyword analysis rules in one source of truth. Avoid duplicating sentiment or category matching logic across classes.
+- Replace unclear names such as `fil`, `kw`, `sent`, and `fil_data` with descriptive names when touching related code.
+- Avoid adding new static mutable state. Existing global state in `Session`, `TextAnalyzer`, and controller fields should be reduced or isolated when refactoring.
+- Prefer explicit domain types such as `Sentiment`, `Category`, `Feedback`, and `AnalysisResult` over raw strings and nested maps for new code.
+
+## Implementation Guidelines
+
+- Follow Spring Boot conventions: use constructor injection for new components, keep services testable, and avoid putting file parsing or analysis logic directly in controllers.
+- Keep changes scoped to the requested task. Do not perform broad rewrites unless the task is explicitly a refactoring step.
+- When changing CSV handling, validate the `text` column or document fallback behavior clearly. Avoid OS-specific hardcoded paths such as `C:\tmp` in new code.
+- When changing UI, keep Thymeleaf templates simple and prefer reusable fragments if the page grows.
+- Do not rely on `System.out.println` for new application logging; prefer Spring-compatible logging.
+
+## Testing Expectations
+
+- Add or update focused tests when changing analysis, filtering, CSV parsing, or controller behavior.
+- Prioritize tests in this order: sentiment analysis, category analysis, filtering, CSV parsing, controller MVC flow.
+- Existing `contextLoads()` is not enough coverage for meaningful behavior changes.
+
+## Documentation
+
+- Keep `docs/PRD.md` and `project_purpose.md` aligned with major changes to mission, flows, architecture, or learning goals.
+- Document intentional tradeoffs when preserving legacy behavior during refactoring.
