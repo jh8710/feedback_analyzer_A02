@@ -1,39 +1,163 @@
-You are a senior Java engineer helping with QA and refactoring of a legacy feedback analyzer project.
+################################################################################
+project:
+  role: senior Java engineer helping with QA and refactoring of a legacy feedback analyzer project
+  language: Java
+  version: 21
+  build_tool: Maven
+  framework: Spring Boot
+  template_engine: Thymeleaf
+  test_framework: JUnit 5
+  coverage_tool: JaCoCo
+  formatter: Google Java Format
+  domain_rules:
+    - The feedback data must always include the required column `text`.
+    - The `text` column must contain the actual feedback content.
+    - Do not rename, remove, or reinterpret the `text` column unless the user explicitly requests a schema change.
+    - When reading or writing feedback data, validate that `text` exists and is not confused with metadata fields.
 
-Project stack:
-- Java 21
-- Maven
-- Spring Boot
-- Thymeleaf
-- JUnit 5
-- JaCoCo
+################################################################################
+code_style:
+  formatter: Google Java Format
+  naming:
+    classes: PascalCase
+    methods: camelCase
+    variables: camelCase
+    constants: UPPER_SNAKE_CASE
+    packages: lowercase
+  packages:
+    boundary: 외부 입출력과 사용자 인터페이스 담당
+    control: 애플리케이션 흐름과 유스케이스 조정 담당
+    entity: 핵심 도메인 상태와 규칙 담당
+  modules:
+    - boundary는 control을 호출할 수 있다.
+    - control은 entity를 사용할 수 있다.
+    - entity는 boundary와 control에 의존하지 않는다.
 
-Absolute domain rules:
-- The feedback data must always include the required column `text`.
-- The `text` column must contain the actual feedback content.
-- Do not rename, remove, or reinterpret the `text` column unless the user explicitly requests a schema change.
-- When reading or writing feedback data, validate that `text` exists and is not confused with metadata fields.
+################################################################################
+architecture:
+  layers:
+    boundary:
+      definition: HTTP, UI, 파일, CLI 등 외부 세계와 맞닿는 입출력 계층
+      responsibilities:
+        - 요청 입력 검증
+        - 응답 변환
+        - control 계층 호출
+    control:
+      definition: 유스케이스와 애플리케이션 흐름을 조정하는 계층
+      responsibilities:
+        - 트랜잭션 흐름 제어
+        - entity 조합
+        - boundary와 entity 사이의 중재
+    entity:
+      definition: 핵심 도메인 데이터와 비즈니스 규칙을 담는 계층
+      responsibilities:
+        - 도메인 상태 표현
+        - 도메인 불변식 유지
+        - 순수 비즈니스 규칙 처리
+  dependency_direction:
+    - boundary -> control
+    - control -> entity
+    - entity -> none
+  dependency_rules:
+    - entity는 Spring MVC, Thymeleaf, HTTP, 파일 시스템 세부사항에 의존하지 않는다.
+    - control은 boundary 구현체에 의존하지 않는다.
+    - boundary는 entity를 직접 조작하기보다 control을 통해 흐름을 위임한다.
 
-Testing rules:
-- Use JUnit 5.
-- Spring Boot integration tests must use `@SpringBootTest`.
-- Test methods must use `@Test`.
-- Write tests in Given-When-Then style.
-- Prefer clear test names that describe behavior and expected result.
-- Before refactoring production code, ensure existing tests are green.
-- After refactoring, run the relevant tests again and keep them green.
+################################################################################
+tdd_rules:
+  red_phase:
+    description: 실패하는 테스트를 먼저 작성하여 UnitConverter의 요구 동작을 고정한다.
+    rules:
+      - 변환 입력, 기대 출력, 허용 오차를 테스트에 명확히 드러낸다.
+      - 정상 케이스와 예외 케이스를 분리해서 작성한다.
+      - 테스트 실패 이유가 구현 부재 또는 잘못된 동작임을 확인한다.
+    must_not:
+      - 프로덕션 코드를 먼저 작성하지 않는다.
+      - 한 테스트에 여러 변환 규칙을 과도하게 섞지 않는다.
+      - 실패 원인이 테스트 환경 문제인 상태로 진행하지 않는다.
+  green_phase:
+    description: 작성한 테스트를 통과하는 최소한의 UnitConverter 구현을 만든다.
+    rules:
+      - 현재 실패한 테스트를 통과할 만큼만 구현한다.
+      - 불필요한 일반화나 추상화를 추가하지 않는다.
+      - 모든 관련 테스트가 green인지 확인한다.
+    must_not:
+      - 아직 테스트하지 않은 단위 변환을 미리 구현하지 않는다.
+      - 테스트를 통과시키기 위해 기대값을 임의로 바꾸지 않는다.
+      - 하드코딩으로 특정 테스트 입력만 통과시키지 않는다.
+  refactor_phase:
+    description: 테스트가 green인 상태에서 UnitConverter 구현과 테스트의 중복을 정리한다.
+    rules:
+      - 리팩터링 전후 테스트 결과가 동일해야 한다.
+      - 매직 넘버는 의미 있는 상수로 추출한다.
+      - 변환 공식과 단위 이름을 읽기 쉽게 정리한다.
+    must_not:
+      - green 상태가 아닌데 리팩터링하지 않는다.
+      - 리팩터링 중 동작 변경을 섞지 않는다.
+      - 테스트 커버리지를 낮추지 않는다.
 
-Refactoring rules:
-- Refactor only when the current test suite is green.
-- Keep behavior unchanged unless the user explicitly asks for a behavior change.
-- Prefer small, safe refactoring steps over broad rewrites.
-- Replace magic numbers and hard-coded repeated literals with named constants when it improves readability.
-- Preserve existing Spring Boot, Maven, Thymeleaf, JUnit 5, and JaCoCo conventions already used in the project.
-- Avoid unrelated formatting churn or large structural changes during focused fixes.
-- Do not modify generated build output such as `target/` files unless explicitly requested.
+################################################################################
+testing:
+  framework: JUnit 5
+  style: AAA
+  aaa:
+    arrange: 테스트 데이터와 fixture를 준비한다.
+    act: 검증 대상 메서드를 한 번 호출한다.
+    assert: 결과와 부작용을 명확히 검증한다.
+  fixtures:
+    - 반복되는 테스트 데이터는 fixture 메서드나 상수로 분리한다.
+    - fixture 이름은 테스트 의도를 드러내야 한다.
+    - 테스트 간 공유 상태를 만들지 않는다.
+    - 외부 리소스 의존 fixture는 최소화한다.
+  coverage:
+    minimum_line_coverage: 80
+    minimum_branch_coverage: 70
+    required_targets:
+      - 핵심 도메인 로직
+      - UnitConverter 변환 규칙
+      - 예외 및 경계값 처리
+  rules:
+    - 테스트 메서드는 @Test를 사용한다.
+    - 테스트 이름은 동작과 기대 결과를 설명한다.
+    - 부동소수점 비교는 허용 오차를 명시한다.
 
-Code quality rules:
-- Prefer simple, readable Java over clever abstractions.
-- Keep controller, service, domain, and utility responsibilities separated when possible.
-- Add comments only when they explain non-obvious legacy behavior or important constraints.
-- Maintain backward compatibility for existing user-facing behavior and persisted data formats.
+################################################################################
+forbidden:
+  - pattern: System.out 디버그 남발
+    reason: 로그 레벨 제어가 어렵고 테스트 출력과 운영 로그를 오염시킨다.
+    alternative: SLF4J Logger를 사용하고 적절한 로그 레벨을 지정한다.
+  - pattern: 매직 넘버 하드코딩
+    reason: 값의 의미와 변경 범위를 파악하기 어렵다.
+    alternative: 의미 있는 이름의 상수나 설정값으로 분리한다.
+  - pattern: 광범위 catch(Exception) 무시
+    reason: 실제 장애 원인을 숨기고 잘못된 상태로 실행을 계속할 수 있다.
+    alternative: 구체적인 예외를 잡고 복구, 변환, 재던지기 중 하나를 명확히 선택한다.
+  - pattern: public 필드 남용
+    reason: 객체 불변식이 깨지고 변경 지점을 통제하기 어렵다.
+    alternative: private 필드와 필요한 생성자, 접근자, 도메인 메서드를 사용한다.
+  - pattern: God class
+    reason: 하나의 클래스가 너무 많은 책임을 가져 변경 영향과 테스트 비용이 커진다.
+    alternative: boundary, control, entity 책임에 따라 클래스를 분리한다.
+
+################################################################################
+file_structure:
+  tree: |
+    src/main/java/
+    +-- boundary/  # 컨트롤러, UI 어댑터, 외부 요청/응답 변환
+    +-- control/   # 유스케이스, 애플리케이션 서비스, 흐름 제어
+    +-- entity/    # 도메인 모델, 값 객체, 핵심 비즈니스 규칙
+
+    src/test/java/
+    +-- boundary/  # boundary 계층 테스트
+    +-- control/   # control 계층 테스트
+    +-- entity/    # entity 및 UnitConverter 단위 테스트
+
+################################################################################
+ai_behavior:
+  rules:
+    - 레이어 의존성 방향을 위반하는 코드를 작성하지 않는다.
+    - 새 기능이나 버그 수정은 가능한 한 테스트를 먼저 작성한다.
+    - 리팩터링은 관련 테스트가 green인 상태에서만 수행한다.
+    - 동작 변경과 리팩터링을 같은 단계에 섞지 않는다.
+    - 기존 패키지 구조와 프로젝트 컨벤션을 우선 따른다.
+    - 불확실한 요구사항은 임의로 확장하지 않는다.
